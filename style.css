@@ -1,0 +1,66 @@
+.tetris {
+  border: 5px ridge #8e6362;
+  border-radius: 15px;
+  width: 340px;
+  height: 450px;
+  margin: auto;
+  background-image: url(1.jpg);
+  box-shadow: 5px 5px 30px 0 black;
+  position: relative;
+}
+
+#tetrisField {
+  border: 5px ridge #8e6362;
+  margin: 5px 10px 10px 10px;
+  float: left;
+  background-image: url(1.jpg);
+  box-shadow: 5px 5px 30px 0 black;
+}
+
+#nextShape {
+  border: 5px ridge #8e6362;
+  vertical-align: top;
+  margin-top: 10px;
+  border-radius: 15px;
+}
+
+.text {
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 5px;
+  font-family: sans-serif, Arial;
+  font-weight: bold;
+  font-size: 18px;
+  color: #894240;
+}
+
+.title {
+  text-align: center;
+  margin: 20px;
+  font-size: 48px;
+  color: #894240;
+  text-shadow: 5px 5px 15px #894240;
+}
+
+.score {
+  margin: 5px 0 0 15px;
+  font-family: sans-serif, Arial;
+  font-weight: bold;
+  font-size: 18px;
+  color: #894240;
+}
+
+.message {
+  display: block;
+  width: 160px;
+  height: 100px;
+  /*border: 2px solid red;*/
+  position: absolute;
+  top: 50px;
+  left: 33px;
+  color: #894240;
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  vertical-align: middle;
+}
