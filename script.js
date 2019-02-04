@@ -143,4 +143,28 @@ function pressKey(e) {
     drawNextShape();
     start();
   }
+  if (e.keyCode === 37 && statusGame === 'inGame') {
+    moveLeft();
+  }
+  if (e.keyCode === 39 && statusGame === 'inGame') {
+    moveRight();
+  }
+}
+
+function moveLeft() {
+  for (var y = 0; y < 4; y++) {
+    for (var x = 0; x < 4; x++) {
+      if (shape[y][x] && x*20+shapePosX === 0) {return;}
+      if (shape[y][x] && fillField.some(function(elem) {return elem[0] === x*20+shapePosX-20 && elem[1] === y*20+shapePosY})) {return;}
+    }}
+  shapePosX -= 20;
+}
+
+function moveRight() {
+  for (var y = 0; y < 4; y++) {
+    for (var x = 0; x < 4; x++) {
+      if (shape[y][x] && x*20+shapePosX === 180) {return;}
+      if (shape[y][x] && fillField.some(function(elem) {return elem[0] === x*20+shapePosX+20 && elem[1] === y*20+shapePosY})) {return;}
+    }}
+  shapePosX += 20;
 }
