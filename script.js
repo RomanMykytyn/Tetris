@@ -7,6 +7,7 @@ var shapeOrientation = 0;
 document.onkeydown = pressKey;
 var message = document.querySelector('.message');
 var statusGame = undefined;
+var timerID = undefined;
 var shape = [];
 var shapePosX = 60;
 var shapePosY = -20;
@@ -64,11 +65,12 @@ function drawNextShape() {
   }
 }
 
-function start() {setInterval(gameLoop, 800);}
+function start() {timerID = setInterval(gameLoop, 200);}
 
 function gameLoop() {
   shapePosY += 20;
   ifShapeEnd();
+  ifGameOver();
   drawFrame();
 }
 
@@ -95,8 +97,29 @@ function ifShapeEnd() {
   }
 }
 
+function ifGameOver() {
+  if (shapePosX === 60 && shapePosY === 0) {
+    loop:
+    for (var y = 0; y < 4; y++) {
+      for (var x = 0; x < 4; x++) {
+        if (shape[y][x]) {
+          if (fillField.some(function(elem) {return elem[0] === x*20+shapePosX && elem[1] === y*20+shapePosY})) {
+            $('.message').empty();
+            $('.message').prepend('GAME OVER.<br>For start game press "Space".');
+            message.style.display = "";
+            clearTimeout(timerID);
+            statusGame = undefined;
+            fillField = [];
+            break loop;
+          }
+  }}}}
+}
+
 function drawFrame() {
   ctx.clearRect(0, 0, 200, 400);
+  if (statusGame === undefined) {
+    return
+  }
   for (var y = 0; y < 4; y++) {
     for (var x = 0; x < 4; x++) {
       if (shape[y][x]) {
