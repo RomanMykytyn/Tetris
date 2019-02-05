@@ -9,6 +9,7 @@ var message = document.querySelector('.message');
 var statusGame = undefined;
 var timerID = undefined;
 var shape = [];
+var shapeRotate = [];
 var shapePosX = 60;
 var shapePosY = -20;
 var fillField = [];
@@ -65,7 +66,7 @@ function drawNextShape() {
   }
 }
 
-function start() {timerID = setInterval(gameLoop, 200);}
+function start() {timerID = setInterval(gameLoop, 600);}
 
 function gameLoop() {
   shapePosY += 20;
@@ -93,6 +94,7 @@ function ifShapeEnd() {
     shapePosY = 0;
     var listShape = [i, j, l, o, s, t, z];
     shape = listShape[shapeType].blocks[shapeOrientation];
+    shapeRotate = [shapeType, shapeOrientation];
     drawNextShape();
   }
 }
@@ -140,6 +142,7 @@ function pressKey(e) {
     shapeType = Math.floor(Math.random() * 7);
     shapeOrientation = Math.floor(Math.random() * 4);
     shape = listShape[shapeType].blocks[shapeOrientation];
+    shapeRotate = [shapeType, shapeOrientation];
     drawNextShape();
     start();
   }
@@ -148,6 +151,9 @@ function pressKey(e) {
   }
   if (e.keyCode === 39 && statusGame === 'inGame') {
     moveRight();
+  }
+  if (e.keyCode === 38 && statusGame === 'inGame') {
+    rotate();
   }
 }
 
@@ -158,6 +164,7 @@ function moveLeft() {
       if (shape[y][x] && fillField.some(function(elem) {return elem[0] === x*20+shapePosX-20 && elem[1] === y*20+shapePosY})) {return;}
     }}
   shapePosX -= 20;
+  drawFrame();
 }
 
 function moveRight() {
@@ -167,4 +174,37 @@ function moveRight() {
       if (shape[y][x] && fillField.some(function(elem) {return elem[0] === x*20+shapePosX+20 && elem[1] === y*20+shapePosY})) {return;}
     }}
   shapePosX += 20;
+  drawFrame();
+}
+
+function rotate() {
+  shapeRotate[1] = shapeRotate[1] + 1;
+  if (shapeRotate[1] > 3) {
+    shapeRotate[1] = 0;
+  }
+  var listShape = [i, j, l, o, s, t, z];
+  var tempShape = listShape[shapeRotate[0]].blocks[shapeRotate[1]];
+  var tempShapePosX = shapePosX;
+  var tempShapePosY = shapePosY;
+  for (var y = 0; y < 4; y++) {
+    for (var x = 0; x < 4; x++) {
+      if (tempShape[y][x]) {
+        if (x*20+tempShapePosX < 0) {
+          tempShapePosX += 20;
+          x = -1;
+        }
+        if (x*20+tempShapePosX > 180) {
+          tempShapePosX -= 20;
+          x = -1;
+        }}}}
+  for (var y = 0; y < 4; y++) {
+    for (var x = 0; x < 4; x++) {
+      if (tempShape[y][x]) {
+        if (fillField.some(function(elem) {return elem[0] === x*20+tempShapePosX && elem[1] === y*20+tempShapePosY})) {
+          shapeRotate[1] -= 1;
+          return;
+        }}}}
+  shape = listShape[shapeRotate[0]].blocks[shapeRotate[1]];
+  shapePosX = tempShapePosX;
+  drawFrame();
 }
