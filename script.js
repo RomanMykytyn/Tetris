@@ -13,6 +13,7 @@ var shapeRotate = [];
 var shapePosX = 60;
 var shapePosY = -20;
 var fillField = [];
+var score = 0;
 var i = { blocks : [[[0,1,0,0],[0,1,0,0],[0,1,0,0],[0,1,0,0],[10,0]],
                     [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0],[0,10]],
                     [[0,0,1,0],[0,0,1,0],[0,0,1,0],[0,0,1,0],[-10,0]],
@@ -72,6 +73,7 @@ function gameLoop() {
   shapePosY += 20;
   ifShapeEnd();
   ifGameOver();
+  destroyLine();
   drawFrame();
 }
 
@@ -134,10 +136,61 @@ function drawFrame() {
   }
 }
 
+function destroyLine() {
+  var lineQvantity = 0;
+  var lastLine = undefined;
+  for (var y = 380; y >= 0; y -= 20) {
+    var blockQvantity = 0;
+    for (var x = 180; x >= 0; x -= 20) {
+      for (var i = 0; i < fillField.length; i++) {
+        if (fillField[i][0] === x && fillField[i][1] === y) {
+          blockQvantity += 1;
+        }
+      }
+    }
+    if (blockQvantity === 10) {
+      lineQvantity++;
+      lastLine = y;
+      for (var j = 0; j < fillField.length; j++) {
+        if (fillField[j][1] === y) {
+          fillField.splice(j, 1);
+          j--;
+        }
+      }
+    }
+  }
+  for (var i = 0; i < fillField.length; i++) {
+    if (fillField[i][1] < lastLine) {
+      fillField[i][1] += 20*lineQvantity;
+    }
+  }
+  score += lineQvantity;
+  if (lineQvantity > 0) {
+    $('.score').empty();
+    $('.score').prepend(function() {return 'SCORE: ' + score});
+  }
+}
+
 function pressKey(e) {
-  if (e.keyCode == 32 && statusGame == undefined) {
+  var checkPause = false;
+  if (e.keyCode === 32 && statusGame === 'inGame') {
+    statusGame = 'Pause';
+    $('.message').empty();
+    $('.message').prepend('PAUSE.<br>For continue game press "Space".');
+    message.style.display = "";
+    checkPause = true;
+    clearTimeout(timerID);
+  }
+  if (e.keyCode === 32 && statusGame === 'Pause' && !checkPause) {
+    statusGame = 'inGame';
+    message.style.display = "none";
+    checkPause = false;
+    start();
+  }
+  if (e.keyCode === 32 && statusGame == undefined) {
     message.style.display = "none";
     statusGame = 'inGame';
+    score = 0;
     var listShape = [i, j, l, o, s, t, z];
     shapeType = Math.floor(Math.random() * 7);
     shapeOrientation = Math.floor(Math.random() * 4);
@@ -154,6 +207,9 @@ function pressKey(e) {
   }
   if (e.keyCode === 38 && statusGame === 'inGame') {
     rotate();
+  }
+  if (e.keyCode === 40 && statusGame === 'inGame') {
+    gameLoop();
   }
 }
 
