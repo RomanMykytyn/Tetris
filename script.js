@@ -14,6 +14,8 @@ var shapePosX = 60;
 var shapePosY = -20;
 var fillField = [];
 var score = 0;
+var color = '';
+var nextColor = '';
 var i = { blocks : [[[0,1,0,0],[0,1,0,0],[0,1,0,0],[0,1,0,0],[10,0]],
                     [[0,0,0,0],[1,1,1,1],[0,0,0,0],[0,0,0,0],[0,10]],
                     [[0,0,1,0],[0,0,1,0],[0,0,1,0],[0,0,1,0],[-10,0]],
@@ -52,16 +54,21 @@ var z = { blocks : [[[0,0,0,0],[1,1,0,0],[0,1,1,0],[0,0,0,0],[10,0]],
 
 
 function drawNextShape() {
+  var listColor =['#922B21', '#633974', '#1A5276', '#0E6655', '#196F3D', '#9C640C', '#873600'];
   var listShape = [i, j, l, o, s, t, z];
   shapeType = Math.floor(Math.random() * 7);
   shapeOrientation = Math.floor(Math.random() * 4);
+  nextColor = listColor[Math.floor(Math.random() * 7)];
   var shapeNext = listShape[shapeType].blocks[shapeOrientation];
   ctxNext.clearRect(0, 0, 80, 80);
   for (var y = 0; y < 4; y++) {
     for (var x = 0; x < 4; x++) {
       if (shapeNext[y][x]) {
-        ctxNext.fillStyle = 'green';
-        ctxNext.fillRect(x*20+shapeNext[4][0], y*20+shapeNext[4][1], 20, 20);
+        ctxNext.fillStyle = nextColor;
+        ctxNext.fillRect(x*20+shapeNext[4][0], y*20+shapeNext[4][1], 19, 19);
+        ctxNext.clearRect(x*20+shapeNext[4][0] + 2, y*20+shapeNext[4][1] + 2, 15, 15);
+        ctxNext.fillRect(x*20+shapeNext[4][0] + 4, y*20+shapeNext[4][1] + 4, 11, 11);
+
       }
     }
   }
@@ -83,7 +90,7 @@ function ifShapeEnd() {
   for (var y = 0; y < 4; y++) {
     for (var x = 0; x < 4; x++) {
       if (shape[y][x]) {
-        tempShape.push([x*20+shapePosX, y*20+shapePosY]);
+        tempShape.push([x*20+shapePosX, y*20+shapePosY, color]);
         if (fillField.some(function(elem) {return elem[0] === x*20+shapePosX && elem[1] === y*20+shapePosY}) || y*20+shapePosY > 380) {
           switchKey = true;
         }}}}
@@ -97,6 +104,7 @@ function ifShapeEnd() {
     var listShape = [i, j, l, o, s, t, z];
     shape = listShape[shapeType].blocks[shapeOrientation];
     shapeRotate = [shapeType, shapeOrientation];
+    color = nextColor;
     drawNextShape();
   }
 }
@@ -127,12 +135,17 @@ function drawFrame() {
   for (var y = 0; y < 4; y++) {
     for (var x = 0; x < 4; x++) {
       if (shape[y][x]) {
-        ctx.fillStyle = 'green';
-        ctx.fillRect(x*20+shapePosX, y*20+shapePosY, 20, 20);
+        ctx.fillStyle = color;
+        ctx.fillRect(x*20+shapePosX, y*20+shapePosY, 19, 19);
+        ctx.clearRect(x*20+shapePosX + 2, y*20+shapePosY + 2, 15, 15);
+        ctx.fillRect(x*20+shapePosX + 4, y*20+shapePosY + 4, 11, 11);
       }}}
   console.log(fillField);
   for (var i = 0; i < fillField.length; i++) {
-    ctx.fillRect(fillField[i][0], fillField[i][1], 20, 20);
+    ctx.fillStyle = fillField[i][2];
+    ctx.fillRect(fillField[i][0], fillField[i][1], 19, 19);
+    ctx.clearRect(fillField[i][0] + 2, fillField[i][1] + 2, 15, 15);
+    ctx.fillRect(fillField[i][0] + 4, fillField[i][1] + 4, 11, 11);
   }
 }
 
@@ -191,11 +204,15 @@ function pressKey(e) {
     message.style.display = "none";
     statusGame = 'inGame';
     score = 0;
+    var listColor =['#922B21', '#633974', '#1A5276', '#0E6655', '#196F3D', '#9C640C', '#873600'];
     var listShape = [i, j, l, o, s, t, z];
+    color = listColor[Math.floor(Math.random() * 7)];
     shapeType = Math.floor(Math.random() * 7);
     shapeOrientation = Math.floor(Math.random() * 4);
     shape = listShape[shapeType].blocks[shapeOrientation];
     shapeRotate = [shapeType, shapeOrientation];
+    $('.score').empty();
+    $('.score').prepend(function() {return 'SCORE: ' + score});
     drawNextShape();
     start();
   }
